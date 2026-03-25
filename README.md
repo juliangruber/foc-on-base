@@ -33,17 +33,21 @@ See [./worker/index.js](./worker/index.js).
 
 #### Storage flow
 
-1. `Client` calculates data commP
-1. `Client` calls `FocOracle.purchaseStorage(commp){ value: amount }`. The included ETH determines the storage duration.
-1. `Client` uploads data to `Worker` via HTTP
-1. `Worker` receives data (on good will, later: include upload fee)
-1. `Worker` also computes commP
-1. `Worker` calls `FocOracle.fulfillOrder(commp)`
-  1. If order found:
-    1. `FocOracle` sends ETH to `Worker`
-    1. `Worker` makes storage deal using FIL
-  1. If order not found:
-    1. `Worker` deletes data 
+```mermaid
+sequenceDiagram
+  participant client as Client
+  participant worker as Worker
+  participant contract as Base:FocOracle
+  participant fwss as Fil:FWSS
+  client->>client: Calculate data commP
+  client->>contract: `purchaseStorage(commp){ value: amount }`
+  client->>worker: Upload data via HTTP
+  worker->>worker: Buffer data (on good-will)
+  worker->>worker: Also calculate data commP
+  worker->>contract: `fulfillOrder(commp)`
+  contract->>worker: Send ETH
+  worker->>fwss: Make storage deal using FIL
+```
 
 Note: There's lots to improve here, and lots of scenarios not yet considered. For example:
 - It's assumed that there only ever is one order for a particular commP
