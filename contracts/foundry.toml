@@ -1,0 +1,11 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+fs_permissions = [{ access = "read", path = "./"}]
+solc-version = "0.8.21"
+optimizer = true
+optimizer-runs = 10_000_000
+
+[rpc_endpoints]
+calibration = "https://sepolia.base.org"
