@@ -19,6 +19,10 @@ SPs aren't talking these contracts yet, therefore they aren't useful.
 1. base client uploads data to oracle worker
 1. Oracle worker creates storage deal on Filecoin
 
+#### Client
+
+See [./client/index.js](./client/index.js).
+
 #### Contract
 
 See [./contracts/src/FocOracle.sol](./contracts/src/FocOracle.sol).
