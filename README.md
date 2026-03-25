@@ -52,4 +52,4 @@ sequenceDiagram
 Note: There's lots to improve here, and lots of scenarios not yet considered. For example:
 - It's assumed that there only ever is one order for a particular commP
 - Orders should be validated and if necessary rejected
-- Only the fulfiller should be allowed to filfill orders
+- Only the fulfiller should be allowed to fulfill orders
