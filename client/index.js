@@ -30,7 +30,8 @@ const { request } = await publicClient.simulateContract({
   address: '0xD68cCC6dbcf0C976bBc51c4eEF89cd3a77eAFAc2',
   abi: FocOracle.abi,
   functionName: 'purchaseStorage',
-  args: [pieceCid.toString()]
+  args: [pieceCid.toString()],
+  value: 0.000001 // TODO: Make this configurable
 })
 await walletClient.writeContractSync(request)
 
