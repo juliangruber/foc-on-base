@@ -103,6 +103,15 @@ const server = createServer(async (req, res) => {
     // })
     // console.log('route found')
     // console.log('estimated USDFC to receive:', route.estimate.toAmount)
+    // console.log('executing route...')
+    // const txResponse = await squid.executeRoute({
+    //   signer: walletClientBase, // TODO: Get ethers signer
+    //   route,
+    // })
+    // console.log('waiting for base transaction receipt...')
+    // const txReceipt = await publicClient.waitForTransactionReceipt({
+    //   hash: txResponse.hash
+    // })
 
     console.log('uploading...')
     // TODO: Set storage duration based on `order.amount`
