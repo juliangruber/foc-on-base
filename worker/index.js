@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http } from 'viem'
+import { createPublicClient, createWalletClient, http, formatUnits } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { baseSepolia } from 'viem/chains'
 import { createServer } from 'node:http' 
@@ -8,11 +8,15 @@ import FocOracle from '../contracts/out/FocOracle.sol/FocOracle.json' with { typ
 import { getRequestBody } from './lib/request.js'
 import * as Piece from '@filoz/synapse-core/piece'
 import { setTimeout } from 'node:timers/promises'
+import { Squid } from "@0xsquid/sdk"
+import * as USDC from '../shared/usdc.js'
+import assert from 'node:assert/strict'
 
 const {
   BASE_PRIVATE_KEY,
   FIL_PRIVATE_KEY,
-  FOC_ORACLE_ADDRESS = '0x0793a77fB5481218acfb7606c52cEAE01ABaC1b7'
+  FOC_ORACLE_ADDRESS = '0x0793a77fB5481218acfb7606c52cEAE01ABaC1b7',
+  SQUID_INTEGRATOR_ID
 } = process.env
 
 const synapse = Synapse.create({
@@ -31,6 +35,14 @@ const walletClient = createWalletClient({
   transport: http()
 })
 
+const [baseAddress] = await walletClient.getAddresses()
+console.log('base address', baseAddress)
+
+const squid = new Squid({
+  baseUrl: "https://apiplus.squidrouter.com",
+  integratorId: SQUID_INTEGRATOR_ID,
+})
+
 // TODO: This receives USDC, but pays in USDFC. Need to exchange
 
 const server = createServer(async (req, res) => {
@@ -39,16 +51,17 @@ const server = createServer(async (req, res) => {
     const body = await getRequestBody(req)
     const pieceCid = Piece.calculate(body)
     console.log('pieceCid:', pieceCid.toString())
-    let request
+    let request, order
     for (let i = 0; i < 10; i++) {
       try {
-        ;({ request } = await publicClient.simulateContract({
+        ;({ request, result: order } = await publicClient.simulateContract({
           account: privateKeyToAccount(BASE_PRIVATE_KEY),
           address: FOC_ORACLE_ADDRESS,
           abi: FocOracle.abi,
           functionName: 'fulfillOrder',
           args: [pieceCid.toString()]
         }))
+        break
       } catch (err) {
         await setTimeout(5_000)
       }
@@ -59,8 +72,22 @@ const server = createServer(async (req, res) => {
       return res.end('order not found')
     }
 
+    console.log('order found:', order)
+
+    console.log('claiming order...')
     await walletClient.writeContractSync(request)
-    console.log('order found, uploading...')
+    console.log('order claimed')
+
+    console.log('checking funds received...')
+    const balance = await USDC.balanceOf({
+      client: publicClient,
+      account: baseAddress
+    })
+    console.log('balance:', formatUnits(balance, 6), 'USDC')
+    assert(balance >= order.amount, 'did not receive funds!')
+    console.log('balance sufficient')
+
+    console.log('uploading...')
     // TODO: Set storage duration based on `order.amount`
     await synapse.storage.upload(body, { pieceCid })
     console.log('uploaded')

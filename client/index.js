@@ -3,7 +3,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { baseSepolia } from 'viem/chains'
 import * as Piece from '@filoz/synapse-core/piece'
 import FocOracle from '../contracts/out/FocOracle.sol/FocOracle.json' with { type: 'json' }
-import * as USDC from './lib/usdc.js'
+import * as USDC from '../shared/usdc.js'
 import { setTimeout } from 'node:timers/promises'
 
 const {

@@ -1,6 +1,8 @@
 {
   "type": "module",
   "dependencies": {
+    "@0xsquid/sdk": "^2.13.0",
+    "@0xsquid/squid-types": "^0.1.221",
     "@filoz/synapse-sdk": "^0.40.0",
     "viem": "^2.47.6"
   }
