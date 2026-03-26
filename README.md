@@ -37,15 +37,18 @@ See [./worker/index.js](./worker/index.js).
 sequenceDiagram
   participant client as Client
   participant worker as Worker
+  participant usdc as USDC
   participant contract as Base:FocOracle
   participant fwss as Fil:FWSS
   client->>client: Calculate data commP
-  client->>contract: `purchaseStorage(commp){ value: amount }`
+  client->>usdc: Allow FocOracle to spend `amount`
+  client->>contract: `purchaseStorage(amount, commp)`
+  contract->>usdc: Transfer in `amount`
   client->>worker: Upload data via HTTP
   worker->>worker: Buffer data (on good-will)
   worker->>worker: Also calculate data commP
   worker->>contract: `fulfillOrder(commp)`
-  contract->>worker: Send ETH
+  contract->>worker: Send USDC
   worker->>fwss: Make storage deal using FIL
 ```
 

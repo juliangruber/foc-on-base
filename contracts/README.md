@@ -3,7 +3,7 @@
 ## Deploy
 
 ```
-0xD68cCC6dbcf0C976bBc51c4eEF89cd3a77eAFAc2
+0x0793a77fB5481218acfb7606c52cEAE01ABaC1b7
 ```
 
 ```console

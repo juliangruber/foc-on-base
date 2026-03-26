@@ -11,7 +11,8 @@ import { setTimeout } from 'node:timers/promises'
 
 const {
   BASE_PRIVATE_KEY,
-  FIL_PRIVATE_KEY
+  FIL_PRIVATE_KEY,
+  FOC_ORACLE_ADDRESS = '0x0793a77fB5481218acfb7606c52cEAE01ABaC1b7'
 } = process.env
 
 const synapse = Synapse.create({
@@ -30,20 +31,20 @@ const walletClient = createWalletClient({
   transport: http()
 })
 
-// TODO: This receives ETH, but pays in FIL. How to exchange?
+// TODO: This receives USDC, but pays in USDFC. Need to exchange
 
 const server = createServer(async (req, res) => {
   console.log(`${req.method} ${req.url}`)
   if (req.method === 'POST') {
     const body = await getRequestBody(req)
     const pieceCid = Piece.calculate(body)
-    console.log({ pieceCid })
+    console.log('pieceCid:', pieceCid.toString())
     let request
     for (let i = 0; i < 10; i++) {
       try {
         ;({ request } = await publicClient.simulateContract({
           account: privateKeyToAccount(BASE_PRIVATE_KEY),
-          address: '0xD68cCC6dbcf0C976bBc51c4eEF89cd3a77eAFAc2',
+          address: FOC_ORACLE_ADDRESS,
           abi: FocOracle.abi,
           functionName: 'fulfillOrder',
           args: [pieceCid.toString()]
@@ -54,6 +55,7 @@ const server = createServer(async (req, res) => {
     }
 
     if (!request) {
+      res.statusCode = 400
       return res.end('order not found')
     }
 
