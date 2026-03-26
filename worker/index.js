@@ -39,11 +39,10 @@ const [baseAddress] = await walletClient.getAddresses()
 console.log('base address', baseAddress)
 
 const squid = new Squid({
-  baseUrl: "https://apiplus.squidrouter.com",
+  baseUrl: 'https://apiplus.squidrouter.com',
   integratorId: SQUID_INTEGRATOR_ID,
 })
-
-// TODO: This receives USDC, but pays in USDFC. Need to exchange
+await squid.init()
 
 const server = createServer(async (req, res) => {
   console.log(`${req.method} ${req.url}`)
@@ -86,6 +85,24 @@ const server = createServer(async (req, res) => {
     console.log('balance:', formatUnits(balance, 6), 'USDC')
     assert(balance >= order.amount, 'did not receive funds!')
     console.log('balance sufficient')
+
+    console.log('swapping USDC for USDFC...')
+    console.log('Squid does not support testnets. since this is a hackathon')
+    console.log('project, I don\'t want to use real funds. <Insert funds')
+    console.log('swapping here>')
+    // console.log('getting route...')
+    // const { route } = await squid.getRoute({
+    //   fromChain: '84532',
+    //   toChain: '314159',
+    //   fromToken: USDC.token,
+    //   toToken: '0xb3042734b608a1B16e9e86B374A3f3e389B4cDf0',
+    //   fromAmount: order.amount.toString(),
+    //   fromAddress: baseAddress,
+    //   toAddress: baseAddress,
+    //   slippage: 1.0, // 1%
+    // })
+    // console.log('route found')
+    // console.log('estimated USDFC to receive:', route.estimate.toAmount)
 
     console.log('uploading...')
     // TODO: Set storage duration based on `order.amount`
