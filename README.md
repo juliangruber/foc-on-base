@@ -1,5 +1,7 @@
 # foc-on-base
-Deploying https://github.com/FilOzone/filecoin-services/ on base
+Deploying https://github.com/FilOzone/filecoin-services/ on base.
+
+[Demo video](https://drive.google.com/file/d/1uwLOHXpDLy-7lqK_1v-kWQ3R9DCs127z/view?usp=sharing)
 
 ## Approaches
 
